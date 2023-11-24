@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 import sys
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -91,5 +93,44 @@ for item in ai_dataframe:
         ai_dataframe = ai_dataframe.drop(item, axis=1)
 print("Seperate dataframe created")
 ai_dataframe.to_csv('./Roles/IHaveNotBeenTaughtAIProperly.csv', mode="w+")
-print(ai_dataframe.career_title[10], "\n", ai_dataframe.workplace_skills[10])
-
+selected_row = 0
+while True:
+    try:
+        selected_row = int(input("Which row of the ai_dataframe would you like to see? [Between 0 and " + str(len(ai_dataframe.career_title) - 1) + "]: "))
+        if selected_row > len(ai_dataframe.career_title) - 1 or selected_row < 0:
+            raise Exception("selected_row is larger than the length of ai_dataframe.career_title")
+        break
+    except:
+        print("\nPlease select a number between 0 and " + str(len(ai_dataframe.career_title) - 1))
+        input("Press ENTER to continue")
+print("\nCareer Title: " + ai_dataframe.career_title.iloc[selected_row], "\nWith the following skills: ", ai_dataframe.workplace_skills.iloc[selected_row])
+input("Press ENTER to continue")
+print("Creating training and test data...")
+X_train, X_test, y_train, y_test =train_test_split(ai_dataframe.workplace_skills, ai_dataframe.career_title, random_state=11, test_size=0.20)
+X_train = np.array(list(X_train), dtype=float)
+X_test = np.array(list(X_test), dtype=float) #https://stackoverflow.com/questions/40514019/setting-an-array-element-with-a-sequence-error-while-training-svm-to-classify-im
+print("Training and test data created")
+print("X_train.shape is ", X_train.shape, "\ny_train.shape is ", y_train.shape)
+print("X_test.shape is ", X_test.shape, "\ny_test.shape is ", y_test.shape)
+input("Press ENTER to continue")
+print("Creating KNN...")
+knn = KNeighborsClassifier()
+length = len(ai_dataframe.workplace_skills.iloc[0])
+print("Making sure all workplace_skills are same length...")
+for item in ai_dataframe.workplace_skills:
+    new_length = len(item)
+    if new_length != length:
+        raise Exception("One or more workplace_skill lists are not the same length!")
+print("All workplace_skill lists are the same length")
+knn.fit(X=X_train, y=y_train)
+predicted = knn.predict(X=X_test)
+expected = y_test
+print("KNN created.")
+print("Predicted is ", predicted)
+print("expected is ", expected)
+input("Press ENTER to continue")
+print("Getting wrong amount...")
+wrong = [(p, e) for (p, e) in zip(predicted, expected) if p != e]
+print("Wrong is ", wrong)
+print("KNN score is ", f'{knn.score(X_test, y_test):.2%}')
+input("Press ENTER to continue")

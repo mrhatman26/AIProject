@@ -1,7 +1,15 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
 import sys
 from wait_for_enterkey import pause
 pd.set_option('display.max_columns', None)
@@ -173,7 +181,6 @@ for item in word_count_alt:
     word_count_file.write(text)
 word_count_file.close()
 print("Words counted. Count saved to word_counts.txt in the same dir as this python file")
-#sys.exit()
 print("Creating KNN...")
 knn = KNeighborsClassifier()
 length = len(ai_dataframe.workplace_skills.iloc[0])
@@ -196,3 +203,37 @@ wrong = [(p, e) for (p, e) in zip(predicted, expected) if p != e]
 print("Wrong is ", wrong)
 print("KNN score is ", f'{knn.score(X_test, y_test):.2%}')
 pause()
+print("Creating confusion matrix...", end="")
+confusion = confusion_matrix(y_true=expected, y_pred=predicted)
+print("Done\nConfusion matrix is: \n", confusion)
+print("Creating classification report...")
+names = []
+for career_number in career_map:
+    names.append(career_map[career_number])
+del names[len(names) - 1]
+print("Names are:\n", names)
+try:
+    print("Classification report is:\n", classification_report(expected, predicted, target_names=names))#, target_names=names))
+except:
+    print("Classification report failed because I have absolutely no idea what I'm doing")
+pause()
+print("Creating heatmap and scores...")
+confusion_dataframe = pd.DataFrame(confusion, index=range(0, len(confusion)), columns=range(0, len(confusion)))
+print("Confusion DataFrame is:\n", confusion_dataframe)
+plt.figure()
+axes = sns.heatmap(confusion_dataframe, annot=True, cmap='nipy_spectral_r')
+axes.figure.show()
+kfold = KFold(n_splits=10, random_state=11, shuffle=True)
+scores = cross_val_score(estimator=knn, X=np.array(list(ai_dataframe.workplace_skills), dtype=float), y=np.array(list(ai_dataframe.career_title), dtype=float), cv=kfold)
+print("Scores are:\n", scores)
+print(f'Mean accuracy: {scores.mean():.2%}')
+print(f'Accuracy standard deviation: {scores.std():.2%}')
+pause()
+print("Saving model using pickle...", end="")
+os.system("mkdir -p Model")
+knn_pickle = open('jobs_model', 'wb')
+pickle.dump(knn, knn_pickle)
+knn_pickle.close()
+print("Done\n'A.I' complete (lol)")
+pause()
+

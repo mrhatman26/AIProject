@@ -96,7 +96,8 @@ for item in ai_dataframe:
 print("Seperate dataframe created")
 print("Mapping career_title rows...")
 ai_dataframe_old = ai_dataframe.copy()
-career_map = {"Developer": 0, "Engineer": 1, "Analyst": 2, "Designer": 3, "Technician": 4, "Consultant": 5, "Adviser": 6, "Architect": 7, "Administrator": 8, "Strategist": 9, "Tester": 10, "Trainer": 11, "Researcher": 12, "Expert": 13, "Executive": 14, "Apprenticeship": 15, "Manager": 16, "Specialist": 17, "SEO": 18, "Graduate": 19, "UX": 20, "Lead": 21, "Support": 22, "Planner": 23, "CO-ordinator": 24, "Monitoring": 25, "Writer": 26, "Master": 27}
+#career_map = {"Developer": 0, "Engineer": 1, "Analyst": 2, "Designer": 3, "Technician": 4, "Consultant": 5, "Adviser": 6, "Architect": 7, "Administrator": 8, "Strategist": 9, "Tester": 10, "Trainer": 11, "Researcher": 12, "Expert": 13, "Executive": 14, "Apprenticeship": 15, "Manager": 16, "Specialist": 17, "SEO": 18, "Graduate": 19, "UX": 20, "Lead": 21, "Support": 22, "Planner": 23, "CO-ordinator": 24, "Monitoring": 25, "Writer": 26, "Master": 27}
+career_map = {"Developer": 0, "Engineer": 1, "Analyst": 2, "Designer": 3, "Technician": 4, "Consultant": 5, "Adviser": 6, "Architect": 7, "Administrator": 8, "Strategist": 9}
 row = 0
 for item in ai_dataframe.career_title:
     print("Item is: ", item)
@@ -117,7 +118,7 @@ for item in ai_dataframe.career_title:
         int(item)
     except:
         print("Dropping row as item could not be mapped")
-        pause()
+        #pause()
         ai_dataframe = ai_dataframe.drop(index=row)#loc[row].drop(index=row)
     row += 1
 ai_dataframe = ai_dataframe.reset_index(drop=True)
@@ -140,9 +141,14 @@ while True:
 print("\nCareer Title: " + str(ai_dataframe.career_title.iloc[selected_row]), "\nWith the following skills: ", str(ai_dataframe.workplace_skills.iloc[selected_row]))
 pause()
 print("Creating training and test data...")
-X_train, X_test, y_train, y_test =train_test_split(ai_dataframe.workplace_skills, ai_dataframe.career_title, random_state=11, test_size=0.20)
+y = ai_dataframe.career_title.drop(columns="workplace_skills")
+X = ai_dataframe.workplace_skills.drop(columns="career_title")
+#X_train, X_test, y_train, y_test = train_test_split(ai_dataframe.workplace_skills, ai_dataframe.career_title, random_state=11, test_size=0.20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11, test_size=0.20)
 X_train = np.array(list(X_train), dtype=float)
 X_test = np.array(list(X_test), dtype=float) #https://stackoverflow.com/questions/40514019/setting-an-array-element-with-a-sequence-error-while-training-svm-to-classify-im
+y_train = np.array(list(y_train), dtype=float)
+y_test = np.array(list(y_test), dtype=float)
 print("Training and test data created")
 print("X_train.shape is ", X_train.shape, "\ny_train.shape is ", y_train.shape)
 print("X_test.shape is ", X_test.shape, "\ny_test.shape is ", y_test.shape)
@@ -167,7 +173,7 @@ for item in word_count_alt:
     word_count_file.write(text)
 word_count_file.close()
 print("Words counted. Count saved to word_counts.txt in the same dir as this python file")
-sys.exit()
+#sys.exit()
 print("Creating KNN...")
 knn = KNeighborsClassifier()
 length = len(ai_dataframe.workplace_skills.iloc[0])
@@ -177,6 +183,7 @@ for item in ai_dataframe.workplace_skills:
     if new_length != length:
         raise Exception("One or more workplace_skill lists are not the same length!")
 print("All workplace_skill lists are the same length")
+print(y_train)
 knn.fit(X=X_train, y=y_train)
 predicted = knn.predict(X=X_test)
 expected = y_test

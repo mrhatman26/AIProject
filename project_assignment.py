@@ -330,4 +330,9 @@ pickle.dump(knn, knn_pickle) #Saves the A.I model to the opened file using pickl
 knn_pickle.close() #Closes the file.
 print("Done\n'A.I' complete (lol)") #And breath... It's all over now... No more nightmares... For now...
 pause(skip_pause) #Not sure why I put one more here, but whatever.
+#A.I accuracy is quite low. (~34%)
+#This is because of the low amount of samples which is made even lower as I had to drop some of them due to their soft skills being empty.
+#I consider it to also be low as I feel that my career_map is really poor.
+#I feel like the accuracy could be improved by using a better map and having more samples that contain a more varied selection of skills.
+#It could also be made better by using other data such as the hard_skills, but I do not have the time for that.
 

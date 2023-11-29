@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ page_name }}</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <div id="title">
+            <img id="my_images" src="{{ url_for('static', filename='AIRecruitment.png') }}">
+            <h1>Job A.I</h1>
+            <h1>Find jobs with your skills</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">About</a></li>
+                <li><a href="{{ url_for('home') }}">Find Recommended Job</a></li>
+            </ul>
+        </nav>
+        <div class="main">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

@@ -20,6 +20,12 @@ def convert_to_list(item): #Converts a list that is a string back into an actual
     return item
 skip_pause = True #If set to True, all instances of pause() will NOT interrupt to wait for the user to press ENTER.
 print("Creating 'A.I' model. START!")
+print("Creating '.static/Model/'...", end="")
+try:
+    os.makedirs("./static/Model/")#Creates the directory "Model" in the same directory as this python file if the directory does not already exist.
+    print("Done")
+except:
+    print("Failed\nError: Directory already exists. Continuing...")
 pd.set_option('display.max_columns', None) #Removes the limit on displayed columns which shows up as elipses. With this, ALL columns are displayed, but the formatting is awful.
 pd.set_option('display.max_rows', None) #The same as the above, but it removes the limit on rows instead.
 pd.options.mode.chained_assignment = None #Removes the chained assignment warning.
@@ -145,10 +151,13 @@ for item in ai_dataframe.career_title:
     row_num += 1 #Increase row_number at the end of every loop. Do not forget this like I did.
 #Finally for this part,l I loop through each column in the dataframe and, if it contains "workskill", then the column is dropped because we don't need it anymore.
 print("Dropping worksill columns.")
-for item in ai_dataframe:
+column_info_file = open("./static/Model/list_order.txt", "w+") #A file used by the web app to convert entered skills into the correct list for the A.I
+for item in ai_dataframe: #Drops all the skill columns. This is the reason for putting "workskill_" at the start of the column's names.
     if "workskill" in item:
+        column_info_file.write(item + "\n") #Write the column's name to the file.
         ai_dataframe = ai_dataframe.drop(item, axis=1)
         print(item + " has been dropped")
+column_info_file.close()
 print("All worksill columns have been dropped.\nSeperate dataframe created")
 pause(skip_pause)
 print("Mapping career_title rows.")
@@ -218,10 +227,10 @@ X = ai_dataframe.workplace_skills.drop(columns="career_title")
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=11, test_size=0.20) #This splits the data of X and y into training data and testing data.
 #The training data retains its labels to train the A.I. So its like saying, this picture of a banana is a banana and the banana has "banana" written on it. This is supervised.
 #The test data is to test the A.I without labels to see how accurate the A.I is. So, this is like taking another picture of a banana without say it is one and asking what it is. This is unsupervised.
-X_train = np.array(list(X_train), dtype=float)
-X_test = np.array(list(X_test), dtype=float) #https://stackoverflow.com/questions/40514019/setting-an-array-element-with-a-sequence-error-while-training-svm-to-classify-im
-y_train = np.array(list(y_train), dtype=float)
-y_test = np.array(list(y_test), dtype=float)
+X_train = np.array(list(X_train), dtype=int)
+X_test = np.array(list(X_test), dtype=int) #https://stackoverflow.com/questions/40514019/setting-an-array-element-with-a-sequence-error-while-training-svm-to-classify-im
+y_train = np.array(list(y_train), dtype=int)
+y_test = np.array(list(y_test), dtype=int)
 #Here, to avoid a lot of errors, I set every training and test variable to an numpy array and specifiy that the values are floats, not objects. (As it was them being 'objects' that caused a lot of errors)
 print("Done\nTraining and test data created")
 print("X_train.shape is ", X_train.shape, "\ny_train.shape is ", y_train.shape)
@@ -322,14 +331,13 @@ axes.figure.show() #Displays the heatmap. If this were a jupyter notebook, this 
 #I still don't like jupyter notebook, but at this point I'm mostly indifferent to it.
 pause(skip_pause)
 kfold = KFold(n_splits=len(ai_dataframe.career_title) - 1, random_state=11, shuffle=True) #From what I understand, this trains the A.I as many times as the number of rows in the ai_dataframe dataframe.
-scores = cross_val_score(estimator=knn, X=np.array(list(ai_dataframe.workplace_skills), dtype=float), y=np.array(list(ai_dataframe.career_title), dtype=float), cv=kfold)
+scores = cross_val_score(estimator=knn, X=np.array(list(ai_dataframe.workplace_skills), dtype=int), y=np.array(list(ai_dataframe.career_title), dtype=int), cv=kfold)
 #Gets the scores of the cross validations. All of the scores range from 0 to 1, but when you have too many, the decimals are not printed and it only shows "1." or "0." which is odd.
 print("Scores are:\n", scores) #Prints the scores
 print(f'Mean accuracy: {scores.mean():.2%}') #Prints the mean average of all the scores.
 print(f'Accuracy standard deviation: {scores.std():.2%}') #Prints the standard deviation of the scores.
 pause(skip_pause)
 print("Saving model using pickle...", end="")
-os.makedirs("./static/Model/")#Creates the directory "Model" in the same directory as this python file if the directory does not already exist.
 knn_pickle = open('./static/Model/jobs_model', 'wb') #Opens or creates job_model.
 pickle.dump(knn, knn_pickle) #Saves the A.I model to the opened file using pickle.
 knn_pickle.close() #Closes the file.

@@ -130,3 +130,11 @@ br{
     width: 50%;
     height: 50%;
 }
+#selcted_skills{
+    background-color: black;
+    color: white;
+    width: 50%;
+    margin: auto;
+    border-radius: 8px;
+    padding: 10px;
+}

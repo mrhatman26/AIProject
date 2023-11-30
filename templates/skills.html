@@ -12,8 +12,14 @@
                 </select>
                 <br>
                 <button type="button" id="add_skill_button">Add Skill</button>
+                <button type="button" id="reset_skills_button">Reset</button>
+                <br>
+                <button type="button" id="submit_skills_button">Submit Skills</button>
         </div>
+        <p id="skills_error">Error goes here</p>
         <div id="selcted_skills"></div>
+        <p id="hidden_ai_answer">{{ ai_answer }}</p>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="{{ url_for('static', filename='scripts/skills_list.js') }}"></script>
 {% endblock %}

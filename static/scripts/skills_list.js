@@ -1,4 +1,5 @@
 console.log("skills_list.js loaded!");
+//Here I load all the elements I need.
 let skillsDropDown = document.getElementById("skills_list");
 let addButton = document.getElementById("add_skill_button");
 let resetButton = document.getElementById("reset_skills_button");
@@ -10,14 +11,16 @@ let errorMessage = document.getElementById("skills_error");
 errorMessage.style.display = "none";
 errorMessage.style.color = "rgb(255, 0, 0)";
 selectedSkillsDiv.style.display = "none";
-let selectableSkills = [];
-let selectedSkills = [];
-let br = document.createElement("br");
+let selectableSkills = []; //This will store all of the values in the drop down menu so that it can be reset. 
+let selectedSkills = []; //This will store the skills the user adds.
+let br = document.createElement("br"); //Allows me to add line breaks using JavaScript.
 let resultShown = false
 for (let l = 0; l < skillsDropDown.length; l++){
     selectableSkills.push(skillsDropDown.options[l].value);
+    //Add the drop down's values to the selectableSkills list.
 }
 if (!window.location.href.includes("None")){
+    //If the URL contains an answer from the A.I show that answer to the user and disable the add and submit buttons.
     console.log("AI Answer given, disabling buttons and showing answer...");
     submitButton.disabled = true;
     addButton.disabled = true;
@@ -88,12 +91,12 @@ function resetSkills(){ //Resets the skills drop down and removes all selected s
     window.location.href = '/job_search/data="None"'
 }
 
-function submitSkills(){
-    if (selectedSkills.length >= 1){
-        submitButton.disabled = true;
+function submitSkills(){ //Submits the skills the data gives.
+    if (selectedSkills.length >= 1){ //Make sure the user has given skills and that the selectedSkills array is not empty.
+        submitButton.disabled = true; //Make sure the user can't press submit again.
         console.log("Sending skills data to Python Flask");
-        let skillsString = "";
-        for (var i = 0; i < selectedSkills.length; i++){
+        let skillsString = ""; //This will be a URL that contains the skills.
+        for (var i = 0; i < selectedSkills.length; i++){ //For each skill in the selectedSkills array, add the skill to a string and seperate each with a plus.
             console.log("Current skill is " + selectedSkills[i])
             if (skillsString === ""){
                 skillsString = selectedSkills[i];
@@ -102,11 +105,11 @@ function submitSkills(){
                 skillsString = skillsString + "+" + selectedSkills[i];
             }
         }
-        skillsString = "/process/skills_data=" + skillsString;
-        window.location.href = skillsString;
+        skillsString = "/process/skills_data=" + skillsString; //Add the URL before the skills.
+        window.location.href = skillsString; //Go to the URL and give the data to the A.I!
     }
     else{
-        errorMessage.innerHTML = "You haven't selected any skills!";
+        errorMessage.innerHTML = "You haven't selected any skills!"; 
         errorMessage.style.display = "block";
     }
 }

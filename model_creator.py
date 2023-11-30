@@ -12,7 +12,7 @@ from sklearn.metrics import confusion_matrix #Allows for the creation of a confu
 from sklearn.metrics import classification_report #Allows for the creation of classification report
 from sklearn.model_selection import KFold #Allows for KFold validation
 from sklearn.model_selection import cross_val_score #Allows for evaluation of a score by cross validation
-from wait_for_enterkey import pause #A method by me that pauses the program and waits for the user to press enter with the message "Press ENTER to coninue"
+from misc_functions import pause #A method by me that pauses the program and waits for the user to press enter with the message "Press ENTER to coninue"
 def convert_to_list(item): #Converts a list that is a string back into an actual list
     item = item.replace("[", "")
     item = item.replace("]", "")

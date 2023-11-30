@@ -2,25 +2,18 @@
 {% block content %}
 <div id="home_div">
         <div id="home_paragraph1">
-                <h3 id="page_nm_home">About Me</h3>
-                <div id="home_image">
-                        <img src="{{ url_for('static', filename='StatementVer1.jpg') }}">
-                        <!--Replace this image with an image of the skills page.-->                        
-                </div>
-                <div id="aboutme">
-                        <p>Do you want to find a job? Do you struggle to know which jobs suit your skills? Then you've come to
-                        the right place! With our website, you can enter the skills that you possess and all of the types of jobs
-                        that suit your skillset all through the use of our A.I that will look at your skills and match you with our
-                        list of job types!
-                        </p>
-                        <br>
-                        <p>Now updated with a whopping accuracy of 34%!</p>
-                        <p>To try it out, click the "Find Recommended Job" button above.</p>
-                </div>
+                <h3 id="page_nm_home">Skills</h3>
+                <label for="skills">List of Skills:</label>
+                <select name="skills" id="skills_list">
+                    <option disabled hidden selected>Select Skills</option>
+                    {% for item in skills %}
+                        <option value="{{ item }}">{{ item }}</option>
+                    {% endfor %}
+                </select>
                 <br>
-                <div id="tinymessage">
-                        <p>Oh yeah, I'm not too great at CSS so I hope you enjoy the look of this site! It's probably the best I can do! -_-</p>
-                </div>
+                <button type="button" id="add_skill_button">Add Skill</button>
         </div>
+        <div id="selcted_skills"></div>
 </div>
+<script src="{{ url_for('static', filename='scripts/skills_list.js') }}"></script>
 {% endblock %}
